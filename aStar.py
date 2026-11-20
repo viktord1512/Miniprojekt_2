@@ -8,9 +8,9 @@ from perlin_noise import PerlinNoise
 # Laver klasser for terræn
 # ------------------------
 class Terræn:
-    def __init__(self, navn, bevægelsesomkostning):
-        self.navn = navn
-        self.bevægelsesomkostning = bevægelsesomkostning
+    def __init__(self, navn, bevægelsesomkostning):         #
+        self.navn = navn                                    #
+        self.bevægelsesomkostning = bevægelsesomkostning    #
 
 class Græs:
     def __init__(self):
@@ -31,10 +31,10 @@ class Lava:
 # -------------------------
 # Konstanterne for terrænet
 # -------------------------
-GRÆS: Final = Græs()       # Konstanten GRÆS defineres ved at fastlåse dens værdi til klassen Græs
-VAND: Final = Vand()       # Konstanten VAND defineres ved at fastlåse dens værdi til klassen Vand
-BJERG: Final = Bjerg()     # Konstanten BJERG defineres ved at fastlåse dens værdi til klassen Bjerg
-LAVA: Final = Lava()       # Konstanten LAVA defineres ved at fastlåse dens værdi til klassen Lava
+GRÆS: Final[Græs] = Græs()       # Konstanten GRÆS defineres ved at fastlåse dens værdi til klassen Græs
+VAND: Final[Vand] = Vand()       # Konstanten VAND defineres ved at fastlåse dens værdi til klassen Vand
+BJERG: Final[Bjerg] = Bjerg()     # Konstanten BJERG defineres ved at fastlåse dens værdi til klassen Bjerg
+LAVA: Final[Lava] = Lava()       # Konstanten LAVA defineres ved at fastlåse dens værdi til klassen Lava
 
 # --------------------
 # Størelsen for pygame
@@ -97,13 +97,46 @@ def heurustik(a, b):                            # Her laves heurustik funktionen
 # Graf klassen for a* algoritmen
 # ------------------------------
 class Graf:
-    def __init__(self, gitter):                                         #
-        self.gitter = gitter                                            #
+    def __init__(self, gitter):                                         # Initialiserer klaseen Graf med et gitter som parameter
+        self.gitter = gitter                                            # Gemmer gitteret ned i en variable
 
-    def inden_for_rammen(self, position):                               #
-        x, y = position                                                 #
-        return 0 <= x < len(self.grid[0]) and 0 <= y < len(self.grid)   #
+    def inden_for_rammen(self, position):                               # Definerer metoden/funktionen hvor position tjekker om positionen er inden for gitterets rammer
+        x, y = position                                                 # Trækker x- og y-koordinaterne ud af position
+        return 0 <= x < len(self.grid[0]) and 0 <= y < len(self.grid)   # Tjekker om x- og y-koordinaterne er inden for gitterets rammer
 
-    def passable(self, position):                                       #
-        x, y = position                                                 #
-        return self.grid[y][x].bevægelsesomkostning > 0                 #
+    def passable(self, position):                                       # Definerer metoden/funktionen hvor positionen tjekkes for om den er passabel
+        x, y = position                                                 # Gemmer x- og y-koordinaterne ud fra position
+        return self.grid[y][x].bevægelsesomkostning > 0                 # Linjen retunerer True hvis feltet på [x] og [y] kan betrædes og hvis ikke giver den False 
+    '''self.grid[y][x] henter koordinaterne for feltet'''
+    '''.bevægelsesomkostning er den pris det koster at bevæge sig ind op feltet'''
+    '''> 0 giver en boolsk værdi: True hvis omkostningen er større end 0, og False hvis den er mindre'''
+
+    def naboer(self, position):                             # Finder naboerne til en given position i gitteret, som er inden for gitterets rammer og kan passeres 
+        x, y = position                                     # Trækker x- og y-koordinaterne ud af position
+        results = [(x+1, y), (x-1, y), (x, y+1), (x, y-1)]  # Liste der angiver de mulige naboer til positionen
+        results = filter(self.inden_for_rammen, results)    # Filtrerer de naboer væk som ikke er inden for gitterets rammer
+        results = filter(self.passable, results)            # Filtrerer de naboer der ikke kan passeres
+        return list(results)                                # Returnerer listen af gyldige naboer
+
+    def cost(self, fra_node, til_node):                 # Finder hvad det koster at gå fra fra_node til til_node
+        x0, y0 = fra_node                               # Trækker x- og y-koordinaterne ud af fra_node
+        x1, y1 = til_node                               # Trækker x- og y-koordinaterne ud af til_node
+        return self.grid[y1][x1].bevægelsesomkostning   # Retunerer bevægelsesomkostningen for til_node
+
+graf = Graf(grid)   # Laver en variabel der indeholder grafen baseret på gitteret
+
+# ----------------------------------------------------
+# Funktion til at rekonstruere stien fra start til mål
+#-----------------------------------------------------
+
+
+
+# --------------------------------------
+# A* som generator (ét skridt ad gangen)
+# --------------------------------------
+
+
+
+# ------
+# Pygame
+# ------

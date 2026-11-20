@@ -84,3 +84,26 @@ for række in raw:                                       # Koden går igennem hv
 # ---------------------------------------------
 # Definer start- og slutpunkt for a* algoritmen
 # ---------------------------------------------
+start = (0, 0)
+slut = (width-1, height-1)
+
+# --------------------------------------
+# Heurustik funktionen til a* algoritmen
+# --------------------------------------
+def heurustik(a, b):                            # Her laves heurustik funktionen hvor a og b er koordinaterne for to punkter på mappet
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])  # Her beregnes den manhattanske afstand mellem punkterne a og b
+
+# ------------------------------
+# Graf klassen for a* algoritmen
+# ------------------------------
+class Graf:
+    def __init__(self, gitter):                                         #
+        self.gitter = gitter                                            #
+
+    def inden_for_rammen(self, position):                               #
+        x, y = position                                                 #
+        return 0 <= x < len(self.grid[0]) and 0 <= y < len(self.grid)   #
+
+    def passable(self, position):                                       #
+        x, y = position                                                 #
+        return self.grid[y][x].bevægelsesomkostning > 0                 #
